@@ -1,0 +1,1216 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8">
+  <title>SPK Pemilihan Smartphone Terbaik</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <style>
+    body {
+      background-color: #f8f9fa;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    .sidebar {
+      height: 100vh;
+      background-color: #fff;
+      border-right: 1px solid #dee2e6;
+    }
+
+    .sidebar .nav-link.active {
+      background-color: #0d6efd;
+      color: #fff;
+    }
+
+    .content {
+      padding: 2rem;
+    }
+
+    .card {
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+    }
+
+    .nav-link i {
+      margin-right: 8px;
+    }
+
+    .matrix-table {
+      font-size: 14px;
+      margin-bottom: 20px;
+    }
+
+    .matrix-table th {
+      background-color: #f8f9fa;
+      text-align: center;
+    }
+
+    .matrix-table td {
+      text-align: center;
+    }
+
+    .step-title {
+      color: #0d6efd;
+      margin: 20px 0 10px 0;
+    }
+
+    /* Tambahan style untuk form edit */
+    .swal2-popup .edit-form-row {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .swal2-popup .edit-form-label {
+      width: 120px;
+      text-align: right;
+      margin-right: 10px;
+    }
+
+    .swal2-popup .edit-form-input {
+      flex: 1;
+      max-width: 200px;
+    }
+
+    /* Style untuk penjelasan perhitungan */
+    .calculation-explanation {
+      background-color: #f8f9fa;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+
+    .formula {
+      font-family: monospace;
+      background: #e9ecef;
+      padding: 8px;
+      border-radius: 4px;
+      margin: 10px 0;
+    }
+
+    .step-explanation {
+      margin-bottom: 15px;
+    }
+
+    .explanation-box {
+      background: #fffbe6;
+      border: 1px solid #ffe58f;
+      border-radius: 6px;
+      padding: 12px 16px;
+      margin-bottom: 15px;
+      font-size: 15px;
+    }
+
+    .explanation-highlight {
+      color: #d48806;
+      font-weight: bold;
+    }
+
+    .explanation-step {
+      margin-bottom: 8px;
+    }
+
+    .explanation-example {
+      background: #e6f7ff;
+      border-left: 4px solid #1890ff;
+      padding: 8px 12px;
+      margin: 8px 0 12px 0;
+      font-size: 14px;
+    }
+
+    /* Style tambahan untuk tombol edit kriteria */
+    .btn-edit-criteria {
+      /* Responsive: gunakan flex dan atur urutan di mobile */
+      float: none;
+      margin-top: 0;
+      margin-bottom: 8px;
+      margin-left: 0;
+      display: inline-block;
+    }
+
+    @media (max-width: 576px) {
+      .btn-edit-criteria {
+        width: 100%;
+        display: block;
+        margin-top: 10px;
+        margin-bottom: 0;
+        margin-left: 0;
+        float: none;
+      }
+
+      #criteria-section .alert.alert-info {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+      }
+    }
+
+    .criteria-warning {
+      color: #d9534f;
+      font-weight: bold;
+      margin-top: 8px;
+    }
+
+    .criteria-success {
+      color: #28a745;
+      font-weight: bold;
+      margin-top: 8px;
+    }
+
+    /* Tambahan untuk warning perhitungan */
+    .calculation-warning {
+      background: #fff3cd;
+      border: 1px solid #ffeeba;
+      color: #856404;
+      border-radius: 6px;
+      padding: 12px 16px;
+      margin-bottom: 15px;
+      font-size: 15px;
+      display: none;
+    }
+
+    /* Highlight untuk peringkat 1 */
+    .highlight-winner {
+      background: linear-gradient(90deg, #d4fc79 0%, #96e6a1 100%);
+      animation: winnerGlow 1.5s infinite alternate;
+      font-weight: bold;
+      color: #218838 !important;
+      box-shadow: 0 0 16px 0 #a3e635;
+      position: relative;
+      z-index: 1;
+    }
+
+    @keyframes winnerGlow {
+      0% {
+        box-shadow: 0 0 16px 0 #a3e635;
+      }
+
+      100% {
+        box-shadow: 0 0 32px 4px #51e67a;
+      }
+    }
+
+    .winner-badge {
+      display: inline-block;
+      background: #28a745;
+      color: #fff;
+      font-size: 13px;
+      font-weight: bold;
+      border-radius: 12px;
+      padding: 2px 12px 2px 8px;
+      margin-left: 8px;
+      vertical-align: middle;
+      animation: badgePop 0.7s;
+    }
+
+    @keyframes badgePop {
+      0% {
+        transform: scale(0.5);
+        opacity: 0;
+      }
+
+      80% {
+        transform: scale(1.15);
+        opacity: 1;
+      }
+
+      100% {
+        transform: scale(1);
+      }
+    }
+
+    .winner-anim {
+      animation: winnerPulse 1.2s infinite alternate;
+    }
+
+    @keyframes winnerPulse {
+      0% {
+        background-color: #28a745;
+      }
+
+      100% {
+        background-color: #43d97b;
+      }
+    }
+
+    .winner-announcement {
+      background: linear-gradient(90deg, #d4fc79 0%, #96e6a1 100%);
+      border: 2px solid #28a745;
+      color: #218838;
+      font-size: 1.2rem;
+      font-weight: bold;
+      border-radius: 10px;
+      padding: 18px 24px;
+      margin-bottom: 18px;
+      text-align: center;
+      box-shadow: 0 0 24px 0 #a3e635;
+      animation: winnerGlow 1.5s infinite alternate;
+      display: none;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container-fluid">
+    <div class="row">
+      <!-- Sidebar -->
+      <div class="col-md-3 sidebar p-3">
+        <h5 class="fw-bold">SPK Smartphone</h5>
+        <div class="nav flex-column nav-pills mt-4">
+          <a href="#" class="nav-link active" id="nav-dashboard"><i class="fas fa-home"></i> Beranda</a>
+          <a href="#" class="nav-link" id="nav-about"><i class="fas fa-info-circle"></i> Tentang</a>
+          <a href="#" class="nav-link" id="nav-criteria"><i class="fas fa-list"></i> Kriteria</a>
+          <a href="#" class="nav-link" id="nav-alternatives"><i class="fas fa-mobile-alt"></i> Alternatif</a>
+          <a href="#" class="nav-link" id="nav-calculation"><i class="fas fa-calculator"></i> Perhitungan</a>
+        </div>
+      </div>
+
+      <!-- Konten Utama -->
+      <div class="col-md-9 content">
+        <div id="dashboard-section">
+          <h4 class="fw-bold mb-3">Rekomendasi Smartphone Terbaik</h4>
+          <button id="btnRecommend" class="btn btn-primary mb-4"><i class="fas fa-check-circle"></i> Dapatkan
+            Rekomendasi</button>
+
+          <div class="row mb-4">
+            <div class="col-md-3">
+              <div class="card text-center">
+                <div class="card-body">
+                  <h6 class="card-title">Jumlah Kriteria</h6>
+                  <h2 id="criteriaCount">0</h2>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="card text-center">
+                <div class="card-body">
+                  <h6 class="card-title">Jumlah Alternatif</h6>
+                  <h2 id="alternativesCount">0</h2>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div id="winnerAnnouncement" class="winner-announcement"></div>
+          <h5>Hasil Rekomendasi</h5>
+          <table class="table table-bordered">
+            <thead>
+              <tr>
+                <th>Peringkat</th>
+                <th>Smartphone</th>
+                <th>Skor</th>
+              </tr>
+            </thead>
+            <tbody id="recommendationResult"></tbody>
+          </table>
+        </div>
+
+        <div id="about-section" style="display:none; animation: fadeIn 1s;">
+          <h4 class="fw-bold mb-3 text-primary">Tentang Aplikasi</h4>
+          <div class="card mb-4 shadow-lg">
+            <div class="card-body">
+              <h5 class="card-title">Apa itu SPK Pemilihan Smartphone?</h5>
+              <p class="card-text">
+                Aplikasi ini dirancang untuk membantu Anda dalam memilih smartphone terbaik sesuai dengan kebutuhan Anda. Kami menggunakan metode <strong>Simple Additive Weighting (SAW)</strong>, yang merupakan metode sederhana dan efektif untuk memberikan rekomendasi berdasarkan kriteria yang Anda pilih.
+              </p>
+            </div>
+          </div>
+
+          <div class="card mb-4 shadow-lg">
+            <div class="card-body">
+              <h5 class="card-title">Cara Kerja Metode SAW</h5>
+              <p class="card-text">
+                Berikut adalah langkah-langkah sederhana dari metode SAW:
+              </p>
+              <ol>
+                <li class="mb-2">
+                  <strong>Menentukan Kriteria</strong><br>
+                  Pilih kriteria penting seperti harga, kamera, dan baterai. Berikan bobot sesuai dengan prioritas Anda.
+                </li>
+                <li class="mb-2">
+                  <strong>Menilai Smartphone</strong><br>
+                  Berikan nilai antara 1-100 untuk setiap kriteria pada setiap smartphone.
+                </li>
+                <li class="mb-2">
+                  <strong>Proses Perhitungan</strong><br>
+                  Sistem akan menghitung skor akhir berdasarkan nilai dan bobot yang telah Anda tentukan.
+                </li>
+                <li class="mb-2">
+                  <strong>Hasil Akhir</strong><br>
+                  Smartphone dengan skor tertinggi akan menjadi rekomendasi terbaik.
+                </li>
+              </ol>
+            </div>
+          </div>
+
+          <div class="card mb-4 shadow-lg">
+            <div class="card-body">
+              <h5 class="card-title">Fitur Aplikasi</h5>
+              <ul class="list-group list-group-flush">
+                <li class="list-group-item"><i class="fas fa-check-circle text-success me-2"></i>Mengelola kriteria dan bobot dengan mudah</li>
+                <li class="list-group-item"><i class="fas fa-check-circle text-success me-2"></i>Input data smartphone yang sederhana</li>
+                <li class="list-group-item"><i class="fas fa-check-circle text-success me-2"></i>Perhitungan otomatis dan akurat</li>
+                <li class="list-group-item"><i class="fas fa-check-circle text-success me-2"></i>Tampilan hasil yang jelas dan mudah dipahami</li>
+                <li class="list-group-item"><i class="fas fa-check-circle text-success me-2"></i>Perangkingan smartphone yang terperinci</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="card mb-4 shadow-lg">
+            <div class="card-body">
+              <h5 class="card-title">Panduan Penggunaan</h5>
+              <ol class="list-group list-group-numbered">
+                <li class="list-group-item">
+                  <strong>Atur Kriteria</strong><br>
+                  Masukkan kriteria penting dan tentukan bobot prioritasnya (total bobot harus 100).
+                </li>
+                <li class="list-group-item">
+                  <strong>Masukkan Data</strong><br>
+                  Tambahkan smartphone yang ingin Anda bandingkan beserta nilai untuk setiap kriteria.
+                </li>
+                <li class="list-group-item">
+                  <strong>Lihat Hasil</strong><br>
+                  Cek peringkat dan rekomendasi smartphone terbaik yang sesuai untuk Anda.
+                </li>
+              </ol>
+            </div>
+          </div>
+
+          <div class="card shadow-lg">
+            <div class="card-body">
+              <h5 class="card-title">Tentang Kami</h5>
+              <p class="card-text">Aplikasi ini dikembangkan oleh <strong>Kelompok 3</strong>:</p>
+              <ul class="list-unstyled">
+                <li><i class="fas fa-user me-2"></i>Aditya - Ketua & Pengembang</li>
+                <li><i class="fas fa-user me-2"></i>Marcelina - Desainer UI/UX</li>
+                <li><i class="fas fa-user me-2"></i>Mutia - Analis Sistem</li>
+              </ul>
+              <p class="card-text mt-3">
+                <small class="text-muted">Versi 1.0 - Proyek Mata Kuliah Sistem Pendukung Keputusan</small>
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div id="criteria-section" style="display:none;">
+          <h4 class="fw-bold mb-3">Kriteria Penilaian</h4>
+          <div class="alert alert-info mb-3 d-flex flex-wrap align-items-center justify-content-between"
+            style="gap: 8px;">
+            <span>Anda dapat mengedit, menambah, atau menghapus kriteria. Total bobot harus <b>100</b>.</span>
+            <button class="btn btn-sm btn-primary btn-edit-criteria" id="btnEditCriteria"><i class="fas fa-edit"></i>
+              Edit Kriteria</button>
+          </div>
+          <ul class="list-group mt-3" id="criteriaList"></ul>
+          <div id="criteriaTotalInfo"></div>
+        </div>
+
+        <div id="alternatives-section" style="display:none;">
+          <h4 class="fw-bold mb-3">Kelola Alternatif</h4>
+          <button id="btnAutoFillAlternatives" class="btn btn-info mb-3"><i class="fas fa-magic"></i> Isi Otomatis
+            Alternatif</button>
+          <form id="alternativesForm">
+            <div class="mb-3">
+              <label for="altName" class="form-label">Nama Smartphone</label>
+              <input type="text" class="form-control" id="altName" required
+                placeholder="Contoh: Samsung Galaxy S24 Ultra">
+            </div>
+            <div id="altCriteriaInputs" class="mb-3"></div>
+            <button type="submit" class="btn btn-success"><i class="fas fa-plus"></i> Tambah Smartphone</button>
+          </form>
+          <hr>
+          <ul class="list-group mt-3" id="alternativesList"></ul>
+        </div>
+
+        <div id="calculation-section" style="display:none;">
+          <h4 class="fw-bold mb-3">Langkah-langkah Perhitungan Metode SAW (Simple Additive Weighting)</h4>
+
+          <div class="calculation-explanation">
+            <div class="explanation-box">
+              <div class="explanation-step"><span class="explanation-highlight">Metode SAW</span> adalah cara sederhana
+                untuk memilih smartphone terbaik dengan <b>menjumlahkan nilai yang sudah dinormalisasi dan dikalikan
+                  bobot</b> untuk setiap kriteria.</div>
+              <div class="explanation-step">Berikut langkah-langkahnya:</div>
+              <ol>
+                <li><b>Susun Matriks Keputusan</b>: Masukkan nilai asli setiap smartphone untuk tiap kriteria. Ini adalah langkah pertama untuk mengumpulkan data yang diperlukan.</li>
+                <li><b>Normalisasi</b>: Ubah nilai asli menjadi skala 0-1 agar adil untuk semua kriteria. Ini membantu kita membandingkan kriteria yang berbeda dengan cara yang sama.</li>
+                <li><b>Kali dengan Bobot</b>: Setiap nilai normalisasi dikali bobot kriteria. Bobot menunjukkan seberapa penting kriteria tersebut bagi Anda.</li>
+                <li><b>Jumlahkan</b>: Semua hasil dikali bobot dijumlahkan untuk mendapatkan skor akhir. Ini adalah langkah di mana kita melihat hasil dari semua perhitungan.</li>
+                <li><b>Urutkan</b>: Smartphone dengan skor tertinggi adalah yang terbaik. Ini adalah langkah terakhir di mana kita menentukan pemenangnya.</li>
+              </ol>
+            </div>
+          </div>
+
+          <!-- Peringatan jika total bobot tidak 100 -->
+          <div id="calculationWeightWarning" class="calculation-warning">
+            <b>Perhitungan tidak dapat dijalankan!</b><br>
+            Total bobot kriteria <span id="currentWeightTotal"></span> (harus 100). Silakan sesuaikan bobot kriteria
+            agar totalnya 100 sebelum melakukan perhitungan.
+          </div>
+
+          <h5 class="step-title">1. Matriks Keputusan (X)</h5>
+          <div class="step-explanation">
+            <div class="explanation-box">
+              <b>Apa itu Matriks Keputusan?</b><br>
+              Matriks ini berisi <span class="explanation-highlight">nilai asli</span> dari setiap smartphone untuk
+              setiap kriteria.<br>
+              <div class="explanation-example">
+                <b>Contoh:</b> Jika smartphone A punya nilai Kamera 90, maka di tabel akan tertulis 90.
+              </div>
+            </div>
+          </div>
+          <div class="table-responsive">
+            <table class="table table-bordered matrix-table" id="decisionMatrix"></table>
+          </div>
+
+          <h5 class="step-title">2. Normalisasi Matriks (R)</h5>
+          <div class="step-explanation">
+            <div class="explanation-box">
+              <b>Mengapa Perlu Normalisasi?</b><br>
+              Agar semua kriteria punya skala yang sama (0-1), sehingga adil saat dijumlahkan.<br>
+              <b>Rumus Normalisasi:</b>
+              <div class="formula">
+                R[ij] = Nilai Smartphone / Nilai Tertinggi dari Kriteria
+              </div>
+              <div class="explanation-example">
+                <b>Contoh:</b> Nilai Kamera tertinggi adalah 95, smartphone A nilainya 90.<br>
+                Maka: R = 90 / 95 = 0.947
+              </div>
+            </div>
+          </div>
+          <div class="table-responsive">
+            <table class="table table-bordered matrix-table" id="normalizedMatrix"></table>
+          </div>
+
+          <h5 class="step-title">3. Perangkingan (V)</h5>
+          <div class="step-explanation">
+            <div class="explanation-box">
+              <b>Cara Menghitung Skor Akhir:</b><br>
+              Setiap nilai normalisasi dikali bobot kriteria, lalu <b>semua hasilnya dijumlahkan</b>.<br>
+              <b>Rumus:</b>
+              <div class="formula">
+                Nilai Akhir = (Nilai Normalisasi Kriteria 1 × Bobot 1) + (Nilai Normalisasi Kriteria 2 × Bobot 2) + ...
+              </div>
+              <div class="explanation-example">
+                <b>Contoh:</b> Bobot Kamera 20, nilai normalisasi 0.947.<br>
+                Maka: 0.947 × 20 = 18.94
+              </div>
+              <div class="explanation-example">
+                <b>Contoh Perhitungan Lengkap:</b><br>
+                Misal smartphone A:<br>
+                <ul>
+                  <li>Kamera: 0.947 × 20 = 18.94</li>
+                  <li>Harga: 0.800 × 25 = 20.00</li>
+                  <li>Baterai: 0.900 × 20 = 18.00</li>
+                  <li>Performa: 0.950 × 20 = 19.00</li>
+                  <li>Layar: 0.900 × 15 = 13.50</li>
+                </ul>
+                <b>Jumlahkan semua:</b> 18.94 + 20.00 + 18.00 + 19.00 + 13.50 = <b>89.44</b>
+              </div>
+            </div>
+          </div>
+          <div class="table-responsive">
+            <table class="table table-bordered matrix-table" id="rankingTable">
+              <thead>
+                <tr>
+                  <th>Alternatif</th>
+                  <th>Perhitungan Detail</th>
+                  <th>Hasil</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+
+          <h5 class="step-title">4. Hasil Akhir</h5>
+          <div class="step-explanation">
+            <div class="explanation-box">
+              <b>Hasil Akhir:</b> Smartphone diurutkan dari skor tertinggi ke terendah.<br>
+              <span class="explanation-highlight">Smartphone dengan skor tertinggi adalah rekomendasi terbaik.</span>
+            </div>
+          </div>
+          <div class="table-responsive">
+            <table class="table table-bordered matrix-table" id="finalResult">
+              <thead>
+                <tr>
+                  <th>Peringkat</th>
+                  <th>Smartphone</th>
+                  <th>Nilai Akhir</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script>
+    $(document).ready(function () {
+      // Kriteria bisa diedit, tambah, hapus
+      let criteria = [
+        { name: 'Harga', weight: 25 },
+        { name: 'Kamera', weight: 20 },
+        { name: 'Baterai', weight: 20 },
+        { name: 'Performa', weight: 20 },
+        { name: 'Layar', weight: 15 }
+      ];
+      const alternatives = [];
+
+      // Placeholder contoh nilai untuk setiap kriteria umum
+      const placeholderStandar = {
+        'Harga': 'Contoh: 95 (semakin tinggi, semakin murah)',
+        'Kamera': 'Contoh: 90 (semakin tinggi, semakin bagus)',
+        'Baterai': 'Contoh: 85 (semakin tinggi, semakin awet)',
+        'Performa': 'Contoh: 95 (semakin tinggi, semakin kencang)',
+        'Layar': 'Contoh: 90 (semakin tinggi, semakin bagus)',
+      };
+
+      // Tampilkan kriteria pada list
+      function tampilkanKriteria() {
+        $('#criteriaList').empty();
+        criteria.forEach((c, index) => {
+          $('#criteriaList').append(`
+          <li class="list-group-item d-flex flex-wrap justify-content-between align-items-center" data-index="${index}">
+            <span class="mb-2 mb-sm-0"><i class='fas fa-check-circle text-success'></i> ${c.name} - Bobot: ${c.weight}</span>
+            <div class="d-flex flex-row flex-wrap gap-2">
+              <button class="btn btn-warning btn-sm edit-criteria"><i class="fas fa-edit"></i></button>
+              <button class="btn btn-danger btn-sm delete-criteria"><i class="fas fa-trash"></i></button>
+            </div>
+          </li>
+        `);
+        });
+        $('#criteriaCount').text(criteria.length);
+        tampilkanTotalBobot();
+      }
+
+      function tampilkanTotalBobot() {
+        let total = criteria.reduce((sum, c) => sum + parseFloat(c.weight), 0);
+        let info = '';
+        if (total === 100) {
+          info = `<div class="criteria-success">Total Bobot: ${total} (Sesuai, harus 100)</div>`;
+        } else {
+          info = `<div class="criteria-warning">Total Bobot: ${total} (Harus 100, silakan sesuaikan!)</div>`;
+        }
+        $('#criteriaTotalInfo').html(info);
+      }
+
+      tampilkanKriteria();
+
+      function updateAltInputs() {
+        const container = $('#altCriteriaInputs');
+        container.empty();
+        criteria.forEach((c, i) => {
+          // Tentukan placeholder sesuai nama kriteria
+          let placeholder = placeholderStandar[c.name] || 'Contoh: 90';
+          container.append(`
+          <label class="form-label mt-2">Nilai untuk ${c.name}</label>
+          <input type="number" class="form-control" name="criteria-${i}" required placeholder="${placeholder}">
+        `);
+        });
+      }
+
+      function updateCalculationTables() {
+        // Cek total bobot
+        let total = criteria.reduce((sum, c) => sum + parseFloat(c.weight), 0);
+
+        // Tampilkan warning jika total bobot tidak 100
+        if (total !== 100) {
+          $('#calculationWeightWarning').show();
+          $('#currentWeightTotal').text(total);
+          // Kosongkan tabel-tabel perhitungan
+          $('#decisionMatrix').empty();
+          $('#normalizedMatrix').empty();
+          $('#rankingTable tbody').empty();
+          $('#finalResult tbody').empty();
+          return;
+        } else {
+          $('#calculationWeightWarning').hide();
+        }
+
+        if (criteria.length === 0 || alternatives.length === 0) {
+          // Jika tidak ada data, tetap kosongkan tabel
+          $('#decisionMatrix').empty();
+          $('#normalizedMatrix').empty();
+          $('#rankingTable tbody').empty();
+          $('#finalResult tbody').empty();
+          return;
+        }
+
+        // 1. Matriks Keputusan
+        const decisionTable = $('#decisionMatrix');
+        decisionTable.empty();
+        let headerRow = '<tr><th>Alternatif</th>';
+        criteria.forEach(c => {
+          headerRow += `<th>${c.name}</th>`;
+        });
+        headerRow += '</tr>';
+        decisionTable.append(headerRow);
+
+        // Tambahkan baris contoh jika belum ada data
+        if (alternatives.length === 0) {
+          let row = `<tr><td><span class="text-muted">Contoh: Samsung Galaxy S24 Ultra</span></td>`;
+          criteria.forEach((c) => {
+            // Placeholder contoh nilai sesuai kriteria
+            let placeholder = placeholderStandar[c.name] || 'Contoh: 90';
+            // Ambil hanya angka dari placeholder jika ada
+            let contohAngka = placeholder.match(/\d+/) ? placeholder.match(/\d+/)[0] : '90';
+            row += `<td><span class="text-muted">Contoh: ${contohAngka}</span></td>`;
+          });
+          row += '</tr>';
+          decisionTable.append(row);
+        } else {
+          alternatives.forEach(alt => {
+            let row = `<tr><td>${alt.name}</td>`;
+            alt.scores.forEach(score => {
+              row += `<td>${score}</td>`;
+            });
+            row += '</tr>';
+            decisionTable.append(row);
+          });
+        }
+
+        // 2. Matriks Normalisasi
+        const matrix = alternatives.map(alt => alt.scores);
+        const maxValues = criteria.map((_, i) => Math.max(...matrix.map(row => row[i])));
+        const normalized = matrix.map(row =>
+          row.map((val, i) => val / maxValues[i])
+        );
+
+        const normalizedTable = $('#normalizedMatrix');
+        normalizedTable.empty();
+        normalizedTable.append(headerRow);
+
+        if (alternatives.length === 0) {
+          let row = `<tr><td><span class="text-muted">Contoh: Samsung Galaxy S24 Ultra</span></td>`;
+          criteria.forEach((c) => {
+            // Placeholder contoh nilai sesuai kriteria
+            let placeholder = placeholderStandar[c.name] || 'Contoh: 90';
+            let contohAngka = placeholder.match(/\d+/) ? placeholder.match(/\d+/)[0] : '90';
+            // Standar nilai tertinggi untuk contoh
+            let nilaiTertinggi = '95';
+            if (c.name === 'Baterai') nilaiTertinggi = '90';
+            if (c.name === 'Layar') nilaiTertinggi = '95';
+            row += `<td><span class="text-muted">Contoh: ${(contohAngka / nilaiTertinggi).toFixed(3)}</span><br><small class="text-muted">(${contohAngka}/${nilaiTertinggi})</small></td>`;
+          });
+          row += '</tr>';
+          normalizedTable.append(row);
+        } else {
+          alternatives.forEach((alt, i) => {
+            let row = `<tr><td>${alt.name}</td>`;
+            normalized[i].forEach((val, j) => {
+              row += `<td>
+              <span title="Nilai asli: ${alt.scores[j]}, Nilai tertinggi: ${maxValues[j]}">
+                ${val.toFixed(3)}
+              </span>
+              <br>
+              <small class="text-muted">(${alt.scores[j]}/${maxValues[j]})</small>
+            </td>`;
+            });
+            row += '</tr>';
+            normalizedTable.append(row);
+          });
+        }
+
+        // 3. Perangkingan
+        const rankingTable = $('#rankingTable tbody');
+        rankingTable.empty();
+
+        // Bobot dalam persen, konversi ke proporsi untuk perhitungan
+        const weightsProp = criteria.map(c => c.weight / 100);
+
+        const weightedScores = normalized.map(row =>
+          row.reduce((sum, val, i) => sum + val * weightsProp[i], 0)
+        );
+
+        if (alternatives.length === 0) {
+          let calculation = criteria.map((c, j) =>
+            `<div>
+            <span class="explanation-highlight">${c.name}:</span>
+            (0.947 × ${c.weight}) = <b>${(0.947 * c.weight).toFixed(2)}</b>
+          </div>`
+          ).join('');
+          let total = (0.947 * 20 + 0.8 * 25 + 0.9 * 20 + 0.95 * 20 + 0.9 * 15).toFixed(2);
+          rankingTable.append(`
+          <tr>
+            <td><span class="text-muted">Contoh: Samsung Galaxy S24 Ultra</span></td>
+            <td>
+              ${calculation}
+              <div class="mt-2"><b>Jumlahkan semua hasil di atas = <span class="explanation-highlight">${total}</span></b></div>
+            </td>
+            <td><b>${total}</b></td>
+          </tr>
+        `);
+        } else {
+          alternatives.forEach((alt, i) => {
+            let calculation = criteria.map((c, j) =>
+              `<div>
+              <span class="explanation-highlight">${c.name}:</span>
+              (${normalized[i][j].toFixed(3)} × ${c.weight}) = <b>${(normalized[i][j] * c.weight).toFixed(2)}</b>
+            </div>`
+            ).join('');
+            let total = criteria.reduce((sum, c, j) => sum + normalized[i][j] * c.weight, 0).toFixed(2);
+
+            rankingTable.append(`
+            <tr>
+              <td>${alt.name}</td>
+              <td>
+                ${calculation}
+                <div class="mt-2"><b>Jumlahkan semua hasil di atas = <span class="explanation-highlight">${total}</span></b></div>
+              </td>
+              <td><b>${total}</b></td>
+            </tr>
+          `);
+          });
+        }
+
+        // 4. Hasil Akhir
+        const finalTable = $('#finalResult tbody');
+        finalTable.empty();
+
+        // Untuk hasil akhir, tampilkan skor dalam skala 100
+        const results = alternatives.map((alt, i) => ({
+          name: alt.name,
+          score: criteria.reduce((sum, c, j) => sum + normalized[i][j] * c.weight, 0)
+        })).sort((a, b) => b.score - a.score);
+
+        if (alternatives.length === 0) {
+          let total = (0.947 * 20 + 0.8 * 25 + 0.9 * 20 + 0.95 * 20 + 0.9 * 15).toFixed(2);
+          finalTable.append(`
+          <tr class="highlight-winner">
+            <td>1</td>
+            <td><span class="text-muted">Contoh: Samsung Galaxy S24 Ultra</span> <span class="winner-badge winner-anim"><i class="fas fa-crown"></i> Terbaik</span></td>
+            <td><b>${total}</b></td>
+          </tr>
+        `);
+        } else {
+          results.forEach((res, i) => {
+            if (i === 0) {
+              finalTable.append(`
+              <tr class="highlight-winner">
+                <td>1</td>
+                <td>${res.name} <span class="winner-badge winner-anim"><i class="fas fa-crown"></i> Terbaik</span></td>
+                <td><b>${res.score.toFixed(2)}</b></td>
+              </tr>
+            `);
+            } else {
+              finalTable.append(`
+              <tr>
+                <td>${i + 1}</td>
+                <td>${res.name}</td>
+                <td><b>${res.score.toFixed(2)}</b></td>
+              </tr>
+            `);
+            }
+          });
+        }
+      }
+
+      $('.nav-link').click(function () {
+        $('.nav-link').removeClass('active');
+        $(this).addClass('active');
+        const id = $(this).attr('id');
+        $('#dashboard-section, #about-section, #criteria-section, #alternatives-section, #calculation-section').hide();
+        if (id === 'nav-dashboard') $('#dashboard-section').show();
+        else if (id === 'nav-about') $('#about-section').show();
+        else if (id === 'nav-criteria') {
+          $('#criteria-section').show();
+          tampilkanKriteria();
+        }
+        else if (id === 'nav-alternatives') {
+          $('#alternatives-section').show();
+          updateAltInputs();
+        }
+        else if (id === 'nav-calculation') {
+          $('#calculation-section').show();
+          updateCalculationTables();
+        }
+      });
+
+      // Edit, tambah, hapus kriteria
+      $(document).on('click', '.edit-criteria', function () {
+        const index = $(this).closest('li').data('index');
+        const kriteria = criteria[index];
+
+        Swal.fire({
+          title: 'Edit Kriteria',
+          html: `
+          <div class="edit-form-row">
+            <label class="edit-form-label">Nama:</label>
+            <input id="editCriteriaName" class="swal2-input edit-form-input" value="${kriteria.name}">
+          </div>
+          <div class="edit-form-row">
+            <label class="edit-form-label">Bobot:</label>
+            <input id="editCriteriaWeight" class="swal2-input edit-form-input" type="number" min="0" max="100" step="1" value="${kriteria.weight}">
+          </div>
+        `,
+          showCancelButton: true,
+          confirmButtonText: 'Simpan',
+          cancelButtonText: 'Batal',
+          preConfirm: () => {
+            const name = document.getElementById('editCriteriaName').value.trim();
+            const weight = parseFloat(document.getElementById('editCriteriaWeight').value);
+            if (!name || isNaN(weight) || weight < 0 || weight > 100) {
+              Swal.showValidationMessage('Nama dan bobot harus diisi dengan benar (bobot antara 0 - 100)');
+              return false;
+            }
+            return { name, weight };
+          }
+        }).then((result) => {
+          if (result.isConfirmed) {
+            criteria[index] = result.value;
+            tampilkanKriteria();
+            updateAltInputs();
+          }
+        });
+      });
+
+      $(document).on('click', '.delete-criteria', function () {
+        const index = $(this).closest('li').data('index');
+        Swal.fire({
+          title: 'Hapus Kriteria',
+          text: `Yakin ingin menghapus kriteria "${criteria[index].name}"?`,
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonText: 'Hapus',
+          cancelButtonText: 'Batal'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            criteria.splice(index, 1);
+            tampilkanKriteria();
+            updateAltInputs();
+          }
+        });
+      });
+
+      $('#btnEditCriteria').click(function () {
+        // Form tambah kriteria baru
+        Swal.fire({
+          title: 'Tambah Kriteria',
+          html: `
+          <div class="edit-form-row">
+            <label class="edit-form-label">Nama:</label>
+            <input id="newCriteriaName" class="swal2-input edit-form-input" placeholder="Contoh: Desain">
+          </div>
+          <div class="edit-form-row">
+            <label class="edit-form-label">Bobot:</label>
+            <input id="newCriteriaWeight" class="swal2-input edit-form-input" type="number" min="0" max="100" step="1" placeholder="Contoh: 10">
+          </div>
+        `,
+          showCancelButton: true,
+          confirmButtonText: 'Tambah',
+          cancelButtonText: 'Batal',
+          preConfirm: () => {
+            const name = document.getElementById('newCriteriaName').value.trim();
+            const weight = parseFloat(document.getElementById('newCriteriaWeight').value);
+            if (!name || isNaN(weight) || weight < 0 || weight > 100) {
+              Swal.showValidationMessage('Nama dan bobot harus diisi dengan benar (bobot antara 0 - 100)');
+              return false;
+            }
+            return { name, weight };
+          }
+        }).then((result) => {
+          if (result.isConfirmed) {
+            criteria.push(result.value);
+            tampilkanKriteria();
+            updateAltInputs();
+          }
+        });
+      });
+
+      // Alternatif
+      $('#btnAutoFillAlternatives').click(function () {
+        const defaultAlternatives = [
+          { name: 'iPhone 15 Pro Max', scores: [95, 90, 85, 95, 90] },
+          { name: 'Samsung Galaxy S24 Ultra', scores: [90, 95, 90, 90, 95] },
+          { name: 'Google Pixel 8 Pro', scores: [85, 95, 85, 85, 90] },
+          { name: 'OnePlus 12', scores: [80, 85, 90, 90, 85] },
+          { name: 'Xiaomi 14 Pro', scores: [75, 85, 85, 85, 85] },
+          { name: 'OPPO Find X7 Ultra', scores: [80, 90, 80, 80, 85] },
+          { name: 'Vivo X100 Pro+', scores: [75, 85, 85, 85, 80] },
+          { name: 'ASUS ROG Phone 8 Pro', scores: [85, 75, 95, 95, 85] },
+          { name: 'Nothing Phone 2', scores: [70, 80, 80, 75, 85] },
+          { name: 'Realme GT5 Pro', scores: [70, 80, 85, 80, 80] }
+        ];
+
+        alternatives.length = 0; // Clear existing alternatives
+        $('#alternativesList').empty();
+
+        defaultAlternatives.forEach((alt, index) => {
+          // Jika jumlah kriteria berubah, isi dengan nilai default 80
+          let scores = [];
+          for (let i = 0; i < criteria.length; i++) {
+            scores.push(alt.scores && alt.scores[i] !== undefined ? alt.scores[i] : 80);
+          }
+          alternatives.push({ name: alt.name, scores });
+          $('#alternativesList').append(`
+          <li class="list-group-item d-flex justify-content-between align-items-center" data-index="${index}">
+            <span><i class='fas fa-mobile-alt text-primary'></i> ${alt.name}</span>
+            <div>
+              <button class="btn btn-warning btn-sm edit-alt me-2"><i class="fas fa-edit"></i></button>
+              <button class="btn btn-danger btn-sm delete-alt"><i class="fas fa-trash"></i></button>
+            </div>
+          </li>
+        `);
+        });
+
+        $('#alternativesCount').text(alternatives.length);
+        Swal.fire('Sukses', '10 Smartphone telah diisi otomatis!', 'success');
+      });
+
+      $('#alternativesForm').submit(function (e) {
+        e.preventDefault();
+        const name = $('#altName').val();
+        const scores = [];
+        for (let i = 0; i < criteria.length; i++) {
+          const val = parseFloat($(`[name='criteria-${i}']`).val());
+          scores.push(val);
+        }
+        const index = alternatives.length;
+        alternatives.push({ name, scores });
+        $('#alternativesList').append(`
+        <li class="list-group-item d-flex justify-content-between align-items-center" data-index="${index}">
+          <span><i class='fas fa-mobile-alt text-primary'></i> ${name}</span>
+          <div>
+            <button class="btn btn-warning btn-sm edit-alt me-2"><i class="fas fa-edit"></i></button>
+            <button class="btn btn-danger btn-sm delete-alt"><i class="fas fa-trash"></i></button>
+          </div>
+        </li>
+      `);
+        $('#altName').val('');
+        updateAltInputs();
+        $('#alternativesCount').text(alternatives.length);
+      });
+
+      // Menangani penghapusan alternatif
+      $(document).on('click', '.delete-alt', function () {
+        const index = $(this).closest('li').data('index');
+        alternatives.splice(index, 1);
+        $(this).closest('li').remove();
+        $('#alternativesCount').text(alternatives.length);
+
+        // Update indeks pada elemen yang tersisa
+        $('#alternativesList li').each(function (i) {
+          $(this).attr('data-index', i);
+        });
+      });
+
+      // Menangani edit alternatif
+      $(document).on('click', '.edit-alt', function () {
+        const index = $(this).closest('li').data('index');
+        const alternative = alternatives[index];
+
+        let inputHtml = `
+        <div class="edit-form-row">
+          <label class="edit-form-label">Nama:</label>
+          <input id="editAltName" class="swal2-input edit-form-input" value="${alternative.name}">
+        </div>
+      `;
+
+        criteria.forEach((c, i) => {
+          let placeholder = placeholderStandar[c.name] || 'Contoh: 90';
+          inputHtml += `
+          <div class="edit-form-row">
+            <label class="edit-form-label">${c.name}:</label>
+            <input id="editScore${i}" class="swal2-input edit-form-input" type="number" value="${alternative.scores[i] !== undefined ? alternative.scores[i] : ''}" placeholder="${placeholder}">
+          </div>
+        `;
+        });
+
+        Swal.fire({
+          title: 'Edit Alternatif',
+          html: inputHtml,
+          showCancelButton: true,
+          confirmButtonText: 'Simpan',
+          cancelButtonText: 'Batal',
+          preConfirm: () => {
+            const name = document.getElementById('editAltName').value;
+            const scores = criteria.map((_, i) => parseFloat(document.getElementById(`editScore${i}`).value));
+            return { name, scores };
+          }
+        }).then((result) => {
+          if (result.isConfirmed) {
+            alternatives[index] = result.value;
+            $(this).closest('li').find('span').html(`<i class='fas fa-mobile-alt text-primary'></i> ${result.value.name}`);
+          }
+        });
+      });
+
+      // Helper: tampilkan pengumuman pemenang di dashboard
+      function showWinnerAnnouncement(winnerName) {
+        if (!winnerName) {
+          $('#winnerAnnouncement').hide();
+          return;
+        }
+        $('#winnerAnnouncement').html(`
+          <div style="display: flex; align-items: center; justify-content: center; gap: 16px;">
+            <span style="
+              display: inline-block;
+              background: linear-gradient(135deg, #facc15 60%, #fbbf24 100%);
+              border-radius: 50%;
+              box-shadow: 0 0 24px 0 #facc15, 0 0 0 4px #fff inset;
+              width: 60px;
+              height: 60px;
+              position: relative;
+              margin-right: 10px;
+              animation: winnerGlow 1.5s infinite alternate;
+            ">
+              <i class="fas fa-crown" style="
+                color: #fff;
+                font-size: 2.5rem;
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -60%);
+                text-shadow: 0 2px 8px #f59e42, 0 0 0 #fff;
+              "></i>
+              <i class="fas fa-star" style="
+                color: #fde68a;
+                font-size: 1.2rem;
+                position: absolute;
+                top: 10px;
+                left: 10px;
+                opacity: 0.8;
+                animation: starTwinkle 1.2s infinite alternate;
+              "></i>
+              <i class="fas fa-star" style="
+                color: #fde68a;
+                font-size: 1rem;
+                position: absolute;
+                top: 10px;
+                right: 10px;
+                opacity: 0.7;
+                animation: starTwinkle 1.5s infinite alternate-reverse;
+              "></i>
+              <i class="fas fa-star" style="
+                color: #fde68a;
+                font-size: 0.9rem;
+                position: absolute;
+                bottom: 10px;
+                left: 18px;
+                opacity: 0.6;
+                animation: starTwinkle 1.7s infinite alternate;
+              "></i>
+            </span>
+            <span>
+              <span style="font-size:1.1rem;">Selamat! <span class="explanation-highlight">${winnerName}</span> adalah</span>
+              <span class="winner-badge winner-anim" style="margin-left:6px;">
+                <i class="fas fa-crown"></i> Smartphone Terbaik
+              </span>
+              <span style="font-size:1.2rem; margin-left:4px;">🎉</span>
+              <br>
+              <span style="font-size:0.95rem; color:#888;">berdasarkan perhitungan SAW</span>
+            </span>
+          </div>
+        `).fadeIn(400);
+      }
+
+      $('#btnRecommend').click(function () {
+        if (criteria.length === 0 || alternatives.length === 0) {
+          Swal.fire('Gagal', 'Tambahkan alternatif terlebih dahulu.', 'warning');
+          $('#winnerAnnouncement').hide();
+          return;
+        }
+        let total = criteria.reduce((sum, c) => sum + parseFloat(c.weight), 0);
+        if (total !== 100) {
+          Swal.fire('Gagal', 'Total bobot kriteria harus 100 sesuai rumus! Perhitungan tidak dapat dijalankan.', 'error');
+          $('#winnerAnnouncement').hide();
+          return;
+        }
+        const matrix = alternatives.map(alt => alt.scores);
+        const maxValues = criteria.map((_, i) => Math.max(...matrix.map(row => row[i])));
+
+        const normalized = matrix.map(row =>
+          row.map((val, i) => val / maxValues[i])
+        );
+
+        // Bobot dalam persen, konversi ke proporsi untuk perhitungan
+        const weightsProp = criteria.map(c => c.weight / 100);
+
+        const weightedScores = normalized.map(row =>
+          row.reduce((sum, val, i) => sum + val * weightsProp[i], 0)
+        );
+
+        // Untuk hasil rekomendasi, tampilkan skor dalam skala 100
+        const results = alternatives.map((alt, i) => ({
+          name: alt.name,
+          score: criteria.reduce((sum, c, j) => sum + normalized[i][j] * c.weight, 0)
+        })).sort((a, b) => b.score - a.score);
+
+        $('#recommendationResult').empty();
+        if (results.length > 0) {
+          showWinnerAnnouncement(results[0].name);
+        } else {
+          $('#winnerAnnouncement').hide();
+        }
+        results.forEach((res, i) => {
+          if (i === 0) {
+            $('#recommendationResult').append(`
+            <tr class="highlight-winner">
+              <td>1</td>
+              <td>${res.name} <span class="winner-badge winner-anim"><i class="fas fa-crown"></i> Terbaik</span></td>
+              <td><b>${res.score.toFixed(2)}</b></td>
+            </tr>
+          `);
+          } else {
+            $('#recommendationResult').append(`<tr><td>${i + 1}</td><td>${res.name}</td><td>${res.score.toFixed(2)}</td></tr>`);
+          }
+        });
+
+        Swal.fire({
+          title: 'Perhitungan Selesai!',
+          html: `
+            <div style="text-align:left;">
+              <div style="font-size:1.1em;font-weight:bold;margin-bottom:6px;">
+                <i class="fas fa-crown" style="color:#bfa100;margin-right:6px;"></i>
+                Smartphone Terbaik (Metode SAW)
+              </div>
+              <div style="display:flex;align-items:center;justify-content:center;gap:14px;margin:16px 0;">
+                <svg class="winner-anim" width="36" height="36" viewBox="0 0 48 48" fill="none" style="vertical-align:middle;" xmlns="http://www.w3.org/2000/svg">
+                  <defs>
+                    <radialGradient id="crownGold" cx="50%" cy="50%" r="80%">
+                      <stop offset="0%" stop-color="#fffbe6"/>
+                      <stop offset="60%" stop-color="#ffe066"/>
+                      <stop offset="100%" stop-color="#bfa100"/>
+                    </radialGradient>
+                  </defs>
+                  <path d="M7 36L13 16L24 32L35 16L41 36Z" fill="url(#crownGold)" stroke="#bfa100" stroke-width="2"/>
+                  <circle cx="13" cy="14" r="3" fill="#ffe066" stroke="#bfa100" stroke-width="1"/>
+                  <circle cx="24" cy="10" r="4" fill="#fffbe6" stroke="#bfa100" stroke-width="1.5"/>
+                  <circle cx="35" cy="14" r="3" fill="#ffe066" stroke="#bfa100" stroke-width="1"/>
+                  <rect x="13" y="34" width="22" height="6" rx="2" fill="#bfa100" stroke="#fffbe6" stroke-width="1"/>
+                </svg>
+                <div>
+                  <div style="font-size:1.05em;font-weight:bold;">${results[0].name}</div>
+                  <div style="font-size:0.98em;color:#333;">Skor Akhir: <b>${results[0].score.toFixed(2)}</b></div>
+                </div>
+              </div>
+              <div style="font-size:0.97em;color:#555;margin-top:8px;">
+                <ul style="padding-left:18px;margin-bottom:6px;">
+                  <li>Penilaian berdasarkan kriteria & bobot yang Anda tentukan</li>
+                  <li>Skor dihitung otomatis menggunakan metode SAW</li>
+                  <li>Lihat tabel di bawah untuk peringkat lengkap semua alternatif</li>
+                </ul>
+                <div style="font-size:0.93em;color:#888;">
+                  <i class="fas fa-info-circle"></i> Semakin tinggi skor, semakin sesuai dengan preferensi Anda.
+                </div>
+              </div>
+            </div>
+          `,
+          icon: 'success',
+          timer: 3200,
+          showConfirmButton: false
+        });
+      });
+
+      // Sembunyikan pengumuman pemenang saat load awal
+      $('#winnerAnnouncement').hide();
+    });
+  </script>
+
+</body>
+
+</html>
